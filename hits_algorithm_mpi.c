@@ -108,8 +108,7 @@ int main(int argc, char *argv[])
 
     buff_hub = calloc(sendcounts[rank], sizeof(int));
     buff_autority = calloc(sendcounts[rank], sizeof(int));
-    MPI_Scatterv(hub, sendcounts, displs, MPI_DOUBLE, buff_hub, sendcounts[rank], MPI_DOUBLE, 0, MPI_COMM_WORLD);
-    MPI_Scatterv(autority, sendcounts, displs, MPI_DOUBLE, buff_autority, sendcounts[rank], MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    
     MPI_Bcast(hub, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(autority, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
@@ -127,7 +126,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        MPI_Gather(buff_autority, sendcounts[rank], MPI_DOUBLE, autority, sendcounts[rank], MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        MPI_Gatherv(buff_autority, sendcounts[rank], MPI_DOUBLE, autority, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         if (rank == 0)
         {
             double norm = 0;
@@ -154,7 +153,8 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        MPI_Gather(buff_hub, sendcounts[rank], MPI_DOUBLE, hub, sendcounts[rank], MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        
+        MPI_Gatherv(buff_hub, sendcounts[rank], MPI_DOUBLE, hub, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
         if (rank == 0)
         {
@@ -170,6 +170,7 @@ int main(int argc, char *argv[])
             }
         }
         MPI_Bcast(hub, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        
         if (rank == 0)
         {
             printf("Iteration NB : %d\nHub :\t\tAutority :\n",k);
@@ -185,6 +186,11 @@ int main(int argc, char *argv[])
     free(graph);
     free(hub);
     free(autority);
+    free(sendcounts);
+    free(displs);
+    free(buff_hub);
+    free(buff_autority);
+
     // done with MPI
     MPI_Finalize();
 }
