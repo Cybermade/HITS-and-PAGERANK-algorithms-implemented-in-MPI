@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     double *graph;
     double *hub;
     double *autority;
-    int nb_iterations = 3;
+    int nb_iterations = 10;
 
     int *sendcounts;               // array describing how many elements to send to each process
     int *displs;                   // array describing the displacements where each segment begins
@@ -112,6 +112,8 @@ int main(int argc, char *argv[])
     MPI_Bcast(hub, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     MPI_Bcast(autority, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
+    double norm = 0;
+
     int begin = displs[rank];
     for (int k = 0; k < nb_iterations; k++)
     {
@@ -129,17 +131,19 @@ int main(int argc, char *argv[])
         MPI_Gatherv(buff_autority, sendcounts[rank], MPI_DOUBLE, autority, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         if (rank == 0)
         {
-            double norm = 0;
+            norm = 0;
             for (int i = 0; i < nb_nodes; i++)
             {
                 norm += pow(autority[i], 2);
             }
             norm = sqrt(norm);
-            for (int i = 0; i < nb_nodes; i++)
-            {
-                autority[i] = autority[i] / norm;
-            }
+               
         }
+        MPI_Bcast(&norm, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        for(int i = 0; i<sendcounts[rank]; i++){
+            buff_autority[i] = buff_autority[i]/norm;
+        }
+        MPI_Gatherv(buff_autority, sendcounts[rank], MPI_DOUBLE, autority, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Bcast(autority, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
 
         for (int i = 0; i < sendcounts[rank]; i++)
@@ -158,17 +162,19 @@ int main(int argc, char *argv[])
 
         if (rank == 0)
         {
-            double norm = 0;
+            norm = 0;
             for (int i = 0; i < nb_nodes; i++)
             {
                 norm += pow(hub[i], 2);
             }
             norm = sqrt(norm);
-            for (int i = 0; i < nb_nodes; i++)
-            {
-                hub[i] = hub[i] / norm;
-            }
+            
         }
+        MPI_Bcast(&norm, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+        for(int i = 0; i<sendcounts[rank]; i++){
+            buff_hub[i] = buff_hub[i]/norm;
+        }
+        MPI_Gatherv(buff_hub, sendcounts[rank], MPI_DOUBLE, hub, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         MPI_Bcast(hub, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         
         if (rank == 0)
