@@ -3,3 +3,5 @@ test
 test.c
 *.exe
 ```
+hits_algorithm
+hits_algorithm_mpi
