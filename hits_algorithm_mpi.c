@@ -1,6 +1,6 @@
 /*
  *
- * mpicc -o hits_algorithm_mpi hits_algorithm_mpi.c
+ * mpicc -o hits_algorithm_mpi hits_algorithm_mpi.c -lm
  * mpirun -np 8 ./hits_algorithm_mpi
  *
  */
@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-void read_ints(const char *file_name, double *graph, int nb_nodes)
+void read_ints(const char *file_name, int *graph, int nb_nodes)
 {
     FILE *file = fopen(file_name, "r");
     int i = 0;
@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     const int nb_nodes = 8;
     double *buff_hub;
     double *buff_autority;
-    double *graph;
+    int *graph;
     double *hub;
     double *autority;
     int nb_iterations = 10;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
     {
         for (int j = 0; j < nb_nodes; j++)
         {
-            printf("%.5f ", graph[i * nb_nodes + j]);
+            printf("%d ", graph[i * nb_nodes + j]);
         }
         printf("\n");
     }
@@ -139,6 +139,7 @@ int main(int argc, char *argv[])
             norm = sqrt(norm);
                
         }
+
         MPI_Bcast(&norm, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         for(int i = 0; i<sendcounts[rank]; i++){
             buff_autority[i] = buff_autority[i]/norm;
@@ -170,6 +171,7 @@ int main(int argc, char *argv[])
             norm = sqrt(norm);
             
         }
+        
         MPI_Bcast(&norm, 1, MPI_DOUBLE, 0, MPI_COMM_WORLD);
         for(int i = 0; i<sendcounts[rank]; i++){
             buff_hub[i] = buff_hub[i]/norm;
