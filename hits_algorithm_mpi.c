@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
     int rem = nb_nodes % numtasks; // elements remaining after division among processes
     int sum = 0;
 
-    graph = calloc(nb_nodes * nb_nodes, sizeof(double));
+    graph = calloc(nb_nodes * nb_nodes, sizeof(int));
     hub = calloc(nb_nodes, sizeof(double));
     autority = calloc(nb_nodes, sizeof(double));
     sendcounts = calloc(numtasks, sizeof(int));
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         }
     }
 
-    MPI_Bcast(graph, nb_nodes * nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
+    MPI_Bcast(graph, nb_nodes * nb_nodes, MPI_INT, 0, MPI_COMM_WORLD);
 
     printf("i am %d\n", rank);
     for (int i = 0; i < nb_nodes; i++)
