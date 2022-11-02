@@ -26,7 +26,7 @@ int main()
     
     double *pagerank;
     double *pagerank_old;
-    int nb_iterations = 3;
+    int nb_iterations = 5;
 
     graph = calloc(nb_nodes, sizeof *graph);
     pagerank = calloc(nb_nodes, sizeof (double));
