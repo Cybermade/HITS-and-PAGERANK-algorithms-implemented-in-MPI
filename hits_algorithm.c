@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-void read_ints(const char *file_name, double **graph)
+void read_ints(const char *file_name, int **graph)
 {
     FILE *file = fopen(file_name, "r");
     int i = 0;
@@ -20,7 +20,7 @@ void read_ints(const char *file_name, double **graph)
 int main()
 {
 
-    double **graph;
+    int **graph;
     double *hub;
     double *autority;
 
@@ -28,11 +28,11 @@ int main()
 
     const int nb_nodes = 8;
 
-    const int nb_iterations = 9;
+    const int nb_iterations = 10;
 
     graph = calloc(nb_nodes, sizeof *graph);
-    hub = calloc(nb_nodes, sizeof *hub);
-    autority = calloc(nb_nodes, sizeof *autority);
+    hub = calloc(nb_nodes, sizeof (double));
+    autority = calloc(nb_nodes, sizeof (double));
     for (int i = 0; i < nb_nodes; i++)
     {
         graph[i] = calloc(nb_nodes, sizeof *(graph[i]));
@@ -40,7 +40,13 @@ int main()
         hub[i] = 1;
     }
     read_ints("test2.txt", graph);
-    for (int k = 0; k < nb_iterations; k++)
+
+    printf("Iteration NB : 0\nHub :\t\tAutority :\n");
+        for (int i = 0; i < nb_nodes; i++)
+        {
+            printf("%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
+        }
+    for (int k = 1; k <= nb_iterations; k++)
     {
 
         norm = 0;
