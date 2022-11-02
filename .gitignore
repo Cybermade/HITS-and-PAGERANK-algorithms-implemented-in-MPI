@@ -8,3 +8,4 @@ hits_algorithm_mpi
 -Wall
 hitsss
 pagerank_algorithm
+pagerank_algorithm_mpi
