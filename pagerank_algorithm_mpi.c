@@ -141,12 +141,18 @@ int main(int argc, char *argv[])
         /* gather pagerank from all processes */
         MPI_Gatherv(buff_pagerank, sendcounts[rank], MPI_DOUBLE, pagerank, sendcounts, displs, MPI_DOUBLE, 0, MPI_COMM_WORLD);
     }
-
+    if(rank == 0){
+        
+    }
     /* free memory */
     free(graph);
     if (rank == 0)
         free(pagerank);
     free(pagerank_old);
+    free(sendcounts);
+    free(displs);
+    free(buff_pagerank);
+    
 
     // done with MPI
     MPI_Finalize();
