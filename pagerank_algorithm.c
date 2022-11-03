@@ -1,3 +1,10 @@
+/*
+ *
+ * @author : Cybermade
+ * gcc -Wall -o pagerank_algorithm pagerank_algorithm.c
+ * ./pagerank_algorithm <input_file> <nb_nodes> <nb_iterations> 
+ *
+ */
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -19,14 +26,16 @@ void read_ints(const char *file_name, int **graph)
     }
     fclose(file);
 }
-int main()
+int main(int argc, char *argv[])
 {
     int **graph;
-    int nb_nodes = 4;
-    
+    char *nbnodes = argv[2];
+    int nb_nodes = atoi(nbnodes); /* number of nodes */
+    double dumping_factor = 0.85;
     double *pagerank;
     double *pagerank_old;
-    int nb_iterations = 5;
+    char *nbiterations = argv[3];
+    int nb_iterations = atoi(nbiterations);  /* number of iterations to run the algorithm */
 
     graph = calloc(nb_nodes, sizeof *graph);
     pagerank = calloc(nb_nodes, sizeof (double));
@@ -37,7 +46,7 @@ int main()
         graph[i] = calloc(nb_nodes, sizeof *(graph[i]));
         
     }
-    read_ints("test3.txt", graph);
+    read_ints(argv[1], graph);
     for (int i = 0; i < nb_nodes; i++)
     {
         for (int j = 0; j < nb_nodes; j++)
@@ -67,12 +76,12 @@ int main()
         update_pagerank(pagerank, pagerank_old, nb_nodes);
     
     for(int i=0;i<nb_nodes;i++)
-    {   
+    {   pagerank[i] = (1 - dumping_factor) /nb_nodes;
         for(int j=0;j<nb_nodes;j++)
         {
             if(graph[j][i])
             {   
-                pagerank[i] += (pagerank_old[j]/(double)number_of_neighbors(graph, j, nb_nodes));
+                pagerank[i] += (dumping_factor)*(pagerank_old[j]/(double)number_of_neighbors(graph, j, nb_nodes));
             }
         }
         
