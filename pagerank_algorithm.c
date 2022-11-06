@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
             max = -1;
             
         }
-    
+    fclose(fptr);
     for (int i = 0; i < nb_nodes; i++)
     {
         free(graph[i]);
