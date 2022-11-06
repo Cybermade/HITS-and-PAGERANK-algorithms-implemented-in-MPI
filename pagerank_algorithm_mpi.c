@@ -88,6 +88,9 @@ int main(int argc, char *argv[])
             displs[i] = sum;
             sum += sendcounts[i];
         }
+        
+        /* create or clear the output file */
+        fclose(fopen("result_pagerank_mpi.txt", "w"));
     }
 
     /* broadcast graph to all processes */
@@ -107,22 +110,31 @@ int main(int argc, char *argv[])
     {
         /* only root updates the pagerank and prints the pagerank after each iteration */
         if (rank == 0)
-        {
+        {   
+            FILE *fptr;
+            fptr = fopen("result_pagerank_mpi.txt", "a");
             printf("iteration %d\n", k);
+            fprintf(fptr, "iteration %d\n", k);
             for (int i = 0; i < nb_nodes; i++)
             {
                 printf("%d -> %.5f\n", i, pagerank[i]);
+                fprintf(fptr, "%d -> %.5f\n", i, pagerank[i]);
             }
             double sum = 0;
+            fprintf(fptr, "\n");
             for (int i = 0; i < nb_nodes; i++)
             {
                 sum += pagerank[i];
             }
-            printf("Sum : %.5f (Should always be 1)\n\n", sum);
+            printf("Sum : %.5f (From 0 to 1, the higher the better for a web structure)\n\n", sum);
+            fprintf(fptr, "Sum : %.5f (From 0 to 1, the higher the better for a web structure)\n\n", sum);
             printf("\n\n\n");
+            fprintf(fptr, "\n\n\n");
 
             /* update pagerank */
             update_pagerank(pagerank, pagerank_old, nb_nodes);
+
+            fclose(fptr);
         }
         /* broadcast pagerank_old to all processes */
         MPI_Bcast(pagerank_old, nb_nodes, MPI_DOUBLE, 0, MPI_COMM_WORLD);
@@ -146,10 +158,13 @@ int main(int argc, char *argv[])
     if(rank ==0)
     {   
         /* simple algorithm to get the top pages */
+        FILE *fptr;
+        fptr = fopen("result_pagerank_mpi.txt", "a");
         double max = pagerank[0]; 
         int max_index = 0;
         int k = nb_nodes;
         printf("Top pages are -> pagerank (descending order) :\n");
+        fprintf(fptr, "Top pages are -> pagerank (descending order) :\n");
         for(int i = 0;i<nb_nodes;i++)
         {   
             
@@ -162,11 +177,15 @@ int main(int argc, char *argv[])
                 }
                 
             }
-            printf("%d -> %d\n", max_index, k--);
-            pagerank[max_index] = 0;
-            max = 0;
+            
+            printf("%d -> %d\n", max_index, k);
+            fprintf(fptr, "%d -> %d\n", max_index, k);
+            k--;
+            pagerank[max_index] = -1;
+            max = -1;
             
         }
+        fclose(fptr);
     }
     /* free memory */
     printf("Process %d finished\n", rank);
