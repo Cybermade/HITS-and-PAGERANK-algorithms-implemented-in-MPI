@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     int **graph;
     char *nbnodes = argv[2];
     int nb_nodes = atoi(nbnodes); /* number of nodes */
-    double dumping_factor = 1;
+    double dumping_factor = 0.85;
     double *pagerank;
     double *pagerank_old;
     char *nbiterations = argv[3];
