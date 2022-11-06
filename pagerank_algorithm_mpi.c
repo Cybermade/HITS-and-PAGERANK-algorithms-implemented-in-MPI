@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     pagerank_old = calloc(nb_nodes, sizeof(double));
     sendcounts = calloc(numtasks, sizeof(int));
     displs = calloc(numtasks, sizeof(int));
-    buff_pagerank = calloc(sendcounts[rank], sizeof(double));
+    
 
     /* read graph from file (we assume that the root process has the graph and it is broadcasted to all processes) */
     if (rank == 0)
@@ -96,6 +96,8 @@ int main(int argc, char *argv[])
     /* broadcast sendcounts and displs */
     MPI_Bcast(sendcounts, numtasks, MPI_INT, 0, MPI_COMM_WORLD);
     MPI_Bcast(displs, numtasks, MPI_INT, 0, MPI_COMM_WORLD);
+    /* allocate memory for pagerank buffer */
+    buff_pagerank = calloc(sendcounts[rank], sizeof(double));
 
     /* calculate begin index for each process */
     begin = displs[rank];
@@ -167,13 +169,19 @@ int main(int argc, char *argv[])
         }
     }
     /* free memory */
+    printf("Process %d finished\n", rank);
     free(graph);
+    graph = NULL;
     if (rank == 0)
-        free(pagerank);
+        {free(pagerank);pagerank = NULL;}
     free(pagerank_old);
+    pagerank_old = NULL;
     free(sendcounts);
+    sendcounts = NULL;
     free(displs);
+    displs = NULL;
     free(buff_pagerank);
+    buff_pagerank = NULL;
 
 
     // done with MPI
