@@ -1,8 +1,8 @@
 /*
  *
  * @author : Cybermade
- * mpicc -Wall -o pagerank_algorithm_mpi hits_algorithm_mpi.c -lm
- * mpirun -np <nb_of_tasks> ./hits_algorithm_mpi <input_file> <nb_nodes> <nb_iterations>
+ * mpicc -Wall -o pagerank_algorithm_mpi pagerank_algorithm_mpi.c
+ * mpirun -np <nb_of_tasks> ./pagerank_algorithm_mpi <input_file> <nb_nodes> <nb_iterations>
  *
  */
 
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
     buff_pagerank = NULL;
 
 
-    // done with MPI
+    /* finalize MPI */
     MPI_Finalize();
 }
 
