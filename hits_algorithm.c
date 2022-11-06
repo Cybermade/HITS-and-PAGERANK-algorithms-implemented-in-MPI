@@ -17,7 +17,7 @@ void read_ints(const char *file_name, int **graph)
     }
     fclose(file);
 }
-int main()
+int main(int argc, char *argv[])
 {
 
     int **graph;
@@ -26,25 +26,32 @@ int main()
 
     double norm = 0;
 
-    const int nb_nodes = 8;
+    char *nbnodes = argv[2];
+    int nb_nodes = atoi(nbnodes); /* number of nodes */
 
-    const int nb_iterations = 10;
+    char *nbiterations = argv[3];
+    int nb_iterations = atoi(nbiterations); /* number of iterations to run the algorithm */
 
     graph = calloc(nb_nodes, sizeof *graph);
     hub = calloc(nb_nodes, sizeof (double));
     autority = calloc(nb_nodes, sizeof (double));
+    fclose(fopen("result_hits.txt", "w"));
+    FILE *fptr;
+    fptr = fopen("result_hits.txt", "a");
     for (int i = 0; i < nb_nodes; i++)
     {
         graph[i] = calloc(nb_nodes, sizeof *(graph[i]));
         autority[i] = 1;
         hub[i] = 1;
     }
-    read_ints("test2.txt", graph);
+    read_ints(argv[1], graph);
 
     printf("Iteration NB : 0\nHub :\t\tAutority :\n");
+    fprintf(fptr, "Iteration NB : 0\nHub :\t\tAutority :\n");
         for (int i = 0; i < nb_nodes; i++)
         {
             printf("%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
+            fprintf(fptr, "%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
         }
     for (int k = 1; k <= nb_iterations; k++)
     {
@@ -92,11 +99,14 @@ int main()
             hub[i] /= norm;
         }
         printf("Iteration NB : %d\nHub :\t\tAutority :\n", k);
+        fprintf(fptr, "Iteration NB : %d\nHub :\t\tAutority :\n", k);
         for (int i = 0; i < nb_nodes; i++)
         {
             printf("%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
+            fprintf(fptr, "%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
         }
         printf("\n\n\n");
+        fprintf(fptr, "\n\n\n");
     }
 
     /*
