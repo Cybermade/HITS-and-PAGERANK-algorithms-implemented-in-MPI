@@ -89,6 +89,28 @@ int main(int argc, char *argv[])
     }
     
     }
+    /* simple algorithm to get the top pages */
+        double max = pagerank[0]; 
+        int max_index = 0;
+        int k = nb_nodes;
+        printf("Top pages are -> pagerank (descending order) :\n");
+        for(int i = 0;i<nb_nodes;i++)
+        {   
+            
+            for(int j = 0; j < nb_nodes; j++)
+            {
+                if(pagerank[j] > max)
+                {
+                    max = pagerank[j];
+                    max_index = j;
+                }
+                
+            }
+            printf("%d -> %d\n", max_index, k--);
+            pagerank[max_index] = 0;
+            max = 0;
+            
+        }
     
     for (int i = 0; i < nb_nodes; i++)
     {
