@@ -46,14 +46,7 @@ int main(int argc, char *argv[])
     }
     read_ints(argv[1], graph);
 
-    printf("Iteration NB : 0\nHub :\t\tAutority :\n");
-    fprintf(fptr, "Iteration NB : 0\nHub :\t\tAutority :\n");
-        for (int i = 0; i < nb_nodes; i++)
-        {
-            printf("%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
-            fprintf(fptr, "%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
-        }
-    for (int k = 1; k <= nb_iterations; k++)
+    for (int k = 0; k < nb_iterations; k++)
     {
 
         norm = 0;
@@ -109,6 +102,7 @@ int main(int argc, char *argv[])
         fprintf(fptr, "\n\n\n");
     }
 
+    fclose(fptr);
     /*
     G := set of pages
 for each page p in G do
