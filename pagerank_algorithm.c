@@ -65,8 +65,8 @@ int main(int argc, char *argv[])
     }
     
     for (int k =0;k<=nb_iterations;k++)
-    {   printf("Iteration %d\n", k);
-        fprintf(fptr, "Iteration %d\n", k);
+    {   printf("iteration %d\n", k);
+        fprintf(fptr, "iteration %d\n", k);
         for (int i = 0; i < nb_nodes; i++)
         {
         printf("%d -> %.5f\n", i, pagerank[i]);
