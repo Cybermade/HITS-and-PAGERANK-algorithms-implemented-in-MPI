@@ -202,8 +202,8 @@ int main(int argc, char *argv[])
                 printf("%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
                 fprintf(fptr, "%d -> %.5f , %d -> %.5f\n", i, hub[i], i, autority[i]);
             }
-            printf("\n");
-            fprintf(fptr, "\n");
+            printf("\n\n\n");
+            fprintf(fptr, "\n\n\n");
             
             fclose(fptr);
         }
