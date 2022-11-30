@@ -12,9 +12,9 @@
 #include <math.h>
 
 /* functions prototypes */
-void read_ints(const char *, int **, int);      /* read graph matrix from from file */
+void read_ints(const char *, char **, int);      /* read graph matrix from from file */
 void update_pagerank(double *, double *, int); /* save the current pagerank before going to the next iteration */
-void inverse_matrix(int**, int);      /* return the number of neighbors of a node */
+void inverse_matrix(char**, int);      /* return the number of neighbors of a node */
 
 int main(int argc, char *argv[])
 {
@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
     MPI_Get_processor_name(hostname, &len);
 
     /* Variables */
-    int **graph = NULL; /* graph */
+    char **graph = NULL; /* graph */
     char *nbnodes = argv[2];
     int nb_nodes = atoi(nbnodes); /* number of nodes */
 
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
     int *number_of_neighbors;      /* number of neighbors for each node */
 
 
-    int **buff_graph = NULL; /* graph rows for each process */
+    char **buff_graph = NULL; /* graph rows for each process */
     /* memory allocation */
     
     pagerank_old = calloc(nb_nodes, sizeof(double));
@@ -69,10 +69,10 @@ int main(int argc, char *argv[])
     /* read graph from file (we assume that the root process has the graph and it is broadcasted to all processes) */
     if (rank == 0)
     {
-        graph = calloc(nb_nodes, sizeof *graph);
+        graph = calloc(nb_nodes, sizeof(char*));
         for (int i = 0; i < nb_nodes; i++)
         {
-            graph[i] = calloc(nb_nodes, sizeof *(graph[i]));   
+            graph[i] = calloc(nb_nodes, sizeof(char));   
         }
         
         read_ints(argv[1], graph, nb_nodes); /* read graph from file */
@@ -132,11 +132,11 @@ int main(int argc, char *argv[])
 
     /* allocate memory for pagerank buffer */
     buff_pagerank = calloc(sendcounts[rank], sizeof(double));
-    buff_graph = calloc(sendcounts[rank], sizeof *buff_graph);
+    buff_graph = calloc(sendcounts[rank], sizeof (char*));
 
-    for (int i = 0; i < nb_nodes; i++)
+    for (int i = 0; i < sendcounts[rank]; i++)
     {
-        buff_graph[i] = calloc(nb_nodes, sizeof *(buff_graph[i]));   
+        buff_graph[i] = calloc(nb_nodes, sizeof (char));
     }
 
     /* scatter graph to all processes */
@@ -144,14 +144,17 @@ int main(int argc, char *argv[])
     {
         for(int i=0;i<sendcounts[0];i++)
         {
-            buff_graph[i] = graph[i];
+            for(int j=0;j<nb_nodes;j++)
+            {
+                buff_graph[i][j] = graph[i][j];
+            }
         }
         /* send graph to all process */
         for(int i=1; i<numtasks; i++)
         {
             for(int j=0; j<sendcounts[i]; j++)
             {
-                MPI_Send(graph[j+displs[i]], nb_nodes, MPI_INT, i, 0, MPI_COMM_WORLD);
+                MPI_Send(graph[j+displs[i]], nb_nodes, MPI_CHAR, i, 0, MPI_COMM_WORLD);
             }
         }
     }
@@ -161,8 +164,7 @@ int main(int argc, char *argv[])
         
         for(int i=0; i<sendcounts[rank]; i++)
         {
-            
-            MPI_Recv(buff_graph[i], nb_nodes, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+            MPI_Recv(buff_graph[i], nb_nodes, MPI_CHAR, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
         }
         
     }
@@ -253,12 +255,49 @@ int main(int argc, char *argv[])
         fclose(fptr);
     }
     
+    /* free memory */
+    printf("Process %d finished\n", rank);
+    
+    if(rank == 0)
+    {
+        free(pagerank);
+        for(int i = 0; i < nb_nodes; i++)
+        {
+            free(graph[i]);
+        }
+        free(graph);
+    }
+    for(int i = 0; i < sendcounts[rank]; i++)
+    {
+        free(buff_graph[i]);
+    }
+    free(buff_graph);
+    
+    
+    
+    
+    free(pagerank_old);
+    pagerank_old = NULL;
+    free(sendcounts);
+    sendcounts = NULL;
+    free(displs);
+    displs = NULL;
+    free(buff_pagerank);
+    buff_pagerank = NULL;
+
+    
+    
+    
+
+    free(number_of_neighbors);
+    number_of_neighbors = NULL;
+
 
     /* finalize MPI */
     MPI_Finalize();
 }
 
-void read_ints(const char *file_name, int **graph, int nb_nodes)
+void read_ints(const char *file_name, char **graph, int nb_nodes)
 {
     if (file_name == NULL)
     {
@@ -289,7 +328,7 @@ void update_pagerank(double *pagerank, double *pagerank_old, int nb_nodes)
         pagerank[i] = 0;
     }
 }
-void inverse_matrix(int** graph,int nb_nodes)
+void inverse_matrix(char** graph,int nb_nodes)
 {
     char tmp;
     for( int i=0;i<nb_nodes;i++)
