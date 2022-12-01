@@ -53,7 +53,6 @@ int main(int argc, char *argv[])
     int *displs;                   /* array describing the displacements where each segment begins */
     int rem = nb_nodes % numtasks; /* elements remaining after division among processes */
     int sum = 0;
-    int begin = 0;                 /* begin index for each process */
     double norm = 0;               /* normalization variable */
 
     /* memory allocation */
@@ -114,6 +113,7 @@ int main(int argc, char *argv[])
         buff_graph_transposed[i] = calloc(nb_nodes, sizeof(char));
     }
     
+    /* scatter graph matrix to all processes */
     if(rank == 0)
     {   
         for(int i=0;i<sendcounts[0];i++)
@@ -143,8 +143,10 @@ int main(int argc, char *argv[])
         
     }
     
+    /* scatter graph transposed matrix to all processes */
     if(rank == 0)
     {   
+        /* transpose graph */
         transpose_graph_matrix(graph, nb_nodes);
         for(int i=0;i<sendcounts[0];i++)
         {
@@ -172,38 +174,6 @@ int main(int argc, char *argv[])
         }
         
     }
-    printf("rank %d : %d\n",rank,sendcounts[rank]);
-    for(int i=0;i<sendcounts[rank];i++)
-    {
-        for(int j=0;j<nb_nodes;j++)
-        {
-            printf("%d ",buff_graph[i][j]);
-        }
-        printf("\n");
-    } 
-    printf("graph transposed\n");
-    for(int i=0;i<sendcounts[rank];i++)
-    {
-        for(int j=0;j<nb_nodes;j++)
-        {
-            printf("%d ",buff_graph_transposed[i][j]);
-        }
-        printf("\n");
-    }
-    
-
-
-    
-
-    
-    
-
-    
-
-    /* calculate begin index for each process */
-    begin = displs[rank];
-
-    
     
     /* begin computation */
     for (int k = 0; k < nb_iterations; k++)
