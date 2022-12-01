@@ -12,9 +12,9 @@
 #include <math.h>
 
 /* functions prototypes */
-void read_ints(const char *, char **, int);      /* read graph matrix from from file */
+void read_graph_matrix(const char *, char **, int);      /* read graph matrix from from file */
 void update_pagerank(double *, double *, int); /* save the current pagerank before going to the next iteration */
-void inverse_matrix(char**, int);      /* return the number of neighbors of a node */
+void transpose_graph_matrix(char**, int);      /* return the number of neighbors of a node */
 
 int main(int argc, char *argv[])
 {
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
             graph[i] = calloc(nb_nodes, sizeof(char));   
         }
         
-        read_ints(argv[1], graph, nb_nodes); /* read graph from file */
+        read_graph_matrix(argv[1], graph, nb_nodes); /* read graph from file */
 
         
 
@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
                 }
             }
         }
-        inverse_matrix(graph, nb_nodes);
+        transpose_graph_matrix(graph, nb_nodes);
         
 
         /* initialize pagerank */
@@ -297,7 +297,7 @@ int main(int argc, char *argv[])
     MPI_Finalize();
 }
 
-void read_ints(const char *file_name, char **graph, int nb_nodes)
+void read_graph_matrix(const char *file_name, char **graph, int nb_nodes)
 {
     if (file_name == NULL)
     {
@@ -328,7 +328,7 @@ void update_pagerank(double *pagerank, double *pagerank_old, int nb_nodes)
         pagerank[i] = 0;
     }
 }
-void inverse_matrix(char** graph,int nb_nodes)
+void transpose_graph_matrix(char** graph,int nb_nodes)
 {
     char tmp;
     for( int i=0;i<nb_nodes;i++)
