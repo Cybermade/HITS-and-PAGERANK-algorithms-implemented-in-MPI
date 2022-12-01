@@ -10,3 +10,13 @@ hitsss
 pagerank_algorithm
 pagerank_algorithm_mpi
 
+pagerank_algorithm_mpi_litememory
+hits_algorithm_mpi_litememory
+pagerank_algorithm_mpi_litememoryV2
+result_hits_mpi_litememory.txt
+result_hits_mpi.txt
+result_hits.txt
+result_pagerank_mpi_litememoryV2.txt
+result_pagerank_mpi_litememory.txt
+result_pagerank_mpi.txt
+result_pagerank.txt
