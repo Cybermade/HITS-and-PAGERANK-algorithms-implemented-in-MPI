@@ -11,7 +11,7 @@
 #include <math.h>
 int number_of_neighbors(int **, int , int);
 void update_pagerank(double*, double*, int);
-void read_ints(const char *file_name, int **graph)
+void read_graph_matrix(const char *file_name, int **graph)
 {
     FILE *file = fopen(file_name, "r");
     int i = 0;
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
         graph[i] = calloc(nb_nodes, sizeof *(graph[i]));
         
     }
-    read_ints(argv[1], graph);
+    read_graph_matrix(argv[1], graph);
     for (int i = 0; i < nb_nodes; i++)
     {
         for (int j = 0; j < nb_nodes; j++)
