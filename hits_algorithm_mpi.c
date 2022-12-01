@@ -12,7 +12,7 @@
 #include <math.h>
 
 /* functions prototypes */
-void read_ints(const char *, int *, int);      /* read graph matrix from from file */
+void read_graph_matrix(const char *, int *, int);      /* read graph matrix from from file */
 
 int main(int argc, char *argv[])
 {
@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     if (rank == 0)
     {
         /* read graph from file */
-        read_ints(argv[1], graph, nb_nodes); /* read graph from file */
+        read_graph_matrix(argv[1], graph, nb_nodes); /* read graph from file */
         /* initialize hub and autority vectors */
         for (int i = 0; i < nb_nodes; i++)
         {
@@ -228,7 +228,7 @@ int main(int argc, char *argv[])
     /* finalize MPI */
     MPI_Finalize();
 }
-void read_ints(const char *file_name, int *graph, int nb_nodes)
+void read_graph_matrix(const char *file_name, int *graph, int nb_nodes)
 {
     if (file_name == NULL)
     {
