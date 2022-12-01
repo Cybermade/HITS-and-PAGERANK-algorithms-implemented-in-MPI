@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
             displsgraph[i] = sum * nb_nodes;
             sum += sendcounts[i];
         }
+        buff_graph = calloc(sendcountsgraph[rank], sizeof(int));
         
         fclose(fopen("result_pagerank_mpi_litememory.txt", "w")); /* clear pagerank.txt file */
         
